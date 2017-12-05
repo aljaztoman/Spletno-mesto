@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Modeliranje kompleksnih sistemov</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/moj.css">
+
+</head>
+
+<body onload="load();">
+	<div id="header">
+		<div id="headerleft">
+			<h1>Modeliranje kompleksnih sistemov</h1>
+		</div>
+		
+	</div>
+	
+	<div id="wrapper">
+		<div id="left">
+		       <a href="index.htm">Domov </a> 
+		      <a href="agentni.htm">Agentni model </a> 
+			<a href="sd.htm">Model sistemske dinamike </a>
+			
+			
+		
+		</div>
+		
+        
+		<div id="content">     
+            
+        <script src="graf.js"></script>
+      <script src="grafpovprecja.js"></script>
+      
+    <h1>Agentni model proizvodnje</h1>
+      <div id="zaboj">
+          <h1>Simulacija</h1>
+                
+         Čas simulacije: <input type = "text" class ="tekstovni" id="čas" value = 0 />
+        <br><br>
+        	&nbsp;	&nbsp;	&nbsp;A	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;B 	&nbsp;&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;C 
+        &nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp; SESTAVA&nbsp;&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;&nbsp;	&nbsp;	&nbsp;	&nbsp;ODPREMA
+        <br>
+    <canvas id="cv1" width="50" height="300" style="border:2px solid #000000"></canvas> 
+    <canvas id="cv2" width="50" height="300" style="border:2px solid #000000"></canvas>      
+    <canvas id="cv3" width="50" height="300" style="border:2px solid #000000"></canvas>
+    <canvas id="cv4" width="300" height="300" style="border:2px solid #000000"></canvas>
+    <canvas id="cv5" width="200" height="300" style="border:2px solid #000000"></canvas>
+          
+          <br><br>
+           <input type="button" class="button" value="Poženi" onClick="poženi();">
+        <input type="button" class="button" value="Ustavi" onClick="ustavi();">
+        <input type="button" class="button" value="Koračno" onClick="koračniZagon();">
+        <br>
+        
+      
+      
+          
+            </div>
+            
+               <div id="zaboj">
+          
+              <div id="zaboj-desno"> 
+                  
+                  <h1>Prerazporeditev delovne sile:</h1>
+                 <br>
+                  
+        <input type="button" class="button" value="A+" onClick="dodajA();"> 
+        <input type="button" class="button-rdeci" value="A-" onClick="zmanjsajA();">
+         Št. Delavcev na komp. A:  <input type = "text" class ="tekstovni" id="delavciA" value = 0 /><br>
+           
+        <input type="button" class="button" value="B+" onClick="dodajB();">
+        <input type="button"class="button-rdeci" value="B-" onClick="zmanjsajB();">
+          Št. Delavcev na komp. B:  <input type = "text" class ="tekstovni" id="delavciB" value = 0 /><br>
+          
+        <input type="button" class="button" value="C+" onClick="dodajC();">
+        <input type="button" class="button-rdeci" value="C-" onClick="zmanjsajC();">
+          Št. Delavcev na komp. C:  <input type = "text" class ="tekstovni" id="delavciC" value = 0 /><br>
+        <br>
+        Razpoložljivi delavci: <input type = "text" class ="tekstovni" id="razpolozljiviDelavci" value = 0 /><br>
+                  <br>
+                  Maksimalno lahko dela 9 delavcev na eni liniji
+                  <br>
+            </div> 
+          <h1> Kosovnica: </h1>
+          
+          Nastavimo število komponent, ki bodo vgrajene v posamezen izdelek
+        <br><br>
+        Zahtevanih A: <input type = "text" class ="tekstovni" id="zahtevanihA" value = 1 />
+        <input type="button" class="button" value="+" onClick="povecajZahA();">
+        <input type="button" class="button-rdeci" value="-" onClick="zmanjsajZahA();"><br>
+        Zahtevanih B: <input type = "text" class ="tekstovni" id="zahtevanihB" value = 1 />
+         <input type="button" class="button" value="+" onClick="povecajZahB();">
+        <input type="button" class="button-rdeci" value="-" onClick="zmanjsajZahB();"><br>
+        Zahtevanih C: <input type = "text" class ="tekstovni" id="zahtevanihC" value = 1 />
+         <input type="button" class="button" value="+" onClick="povecajZahC();">
+        <input type="button" class="button-rdeci" value="-" onClick="zmanjsajZahC();">
+        <br>
+        Sestavni čas: &nbsp;<input type = "text" class ="tekstovni" id="sestavniCas" value = 1100 />
+         <input type="button" class="button" value="Potrdi" onClick="potrdiSestavniCas();"> (min. 1000)
+       <br><br>
+          Sestavni čas nastavimo, ko linijo zaustavimo in ga potrdimo
+          <br>
+          <br>
+          
+            </div>
+            
+            
+            <div id="zaboj">
+                
+                   <div id="zaboj-desno">
+Linija A: <canvas id="graf1" width="300" height="100" style="border:1px dashed #00c3c3"></canvas>
+<br>
+Linija B: <canvas id="graf2" width="300" height="100" style="border:1px dashed #00c3c3"></canvas>
+<br>
+Linija C: <canvas id="graf3" width="300" height="100" style="border:1px dashed #00c3c3"></canvas>
+<br>
+           
+                </div>
+    
+           <h1>Statistike</h1>
+                                
+                  Število izdanih izdelkov:  <input type = "text" class ="tekstovni"  id="izdani" value = 0 />
+                <br>
+                Število izgubljenih korakov: <input type = "text" class ="tekstovni-err" id="štIzgub" value = 0 />
+                <br><br>
+                <h1>Trenutno stanje v proizvodnji:</h1>
+                <br>
+                
+                Število Komponent tipa A: <input type = "text" class ="tekstovni" id="štKompA" value = 0 /><br>
+           Število Komponent tipa B: <input type = "text" class ="tekstovni" id="štKompB" value = 0 /><br>
+           Število Komponent tipa C: <input type = "text" class ="tekstovni" id="štKompC" value = 0 /><br>
+                
+                <br><br><br>
+          
+     
+            </div>
+        
+<br>
+    <script type="text/javascript">
+        
+        "use strict"; //omogočimo delo z razredi
+        
+        // ********************************* SPREMENLJIVKE ****************************************************
+        
+        var canvas, ctx, canvas2, ctx2, canvas3, ctx3; //novi spremenljivki za platno in kontekst
+       
+        var graf1, graf2, graf3;
+        
+        
+        var kompA =[];
+        var kompB =[];
+        var kompC =[];// ustvarimo array za agente
+        
+        var čas = 0;
+        var steviloKomponentA = 0;
+        var steviloKomponentB = 0;
+        var steviloKomponentC = 0;//vnesemo število agentov
+        
+        var sestevekNorm; // predstavlja maksimalno razpoložljivost naše delovne sile
+        var normaA = 500;  // določimo začetne norme po posameznih komponentah 
+        var normaB = 500;
+        var normaC = 500;
+        
+        var normaAcas =0;
+        var normaBcas =0;
+        var normaCcas =0;
+        
+        var skupnoDelavci = 16
+        var razpolozljiviDelavci=0;
+        var delavciA = 5;
+        var delavciB = 5;
+        var delavciC = 5;
+        
+        // spremenljivke za sestavno linijo 
+        
+        var canvas4, ctx4; 
+        var kompDeli = []; // array za komponente na sestavni liniji, preden so sestavnljene ;; za namene animacije
+        var sestavaCas = 0;
+        var steviloIzdelkov = 0;
+        
+        var zahtevanihA=1;
+        var zahtevanihB=1;
+        var zahtevanihC=1;
+        var zahtevaniSkupno=0;
+        
+        var sestavniCas = 1100; 
+        
+        // spremenljivke za odpremo
+        
+        var canvas5, ctx5;
+        var tovornjak = [];
+        var kolicinaTovornjak=0;
+        var odpremaCas = 0;
+        
+        var stopČas = 500000; // stop čas preberemo iz vnosnega polja
+        var aktiven; // za kontroliranje funkcije setTimeout (za prekinitev)
+        var stikaloKoračniZagon = 0; // stikalo za koračno izvedbo
+            
+        var števecIzgub = 0;
+        
+         // ********************************* /SPREMENLJIVKE ***************************************************
+        
+        
+        
+        class Agent{
+            
+            constructor (x,y,xVel,yVel) {
+                this.x=x; //določimo lastnost x pozicije agenta
+                this.y=y;
+                this.xVel = xVel;
+                this.yVel = yVel;
+                
+            }
+            
+            update(){ //članska funkcija za vse agente enaka
+                this.x += this.xVel;
+                this.y += this.yVel;
+                
+                
+                
+            }
+            
+        }
+     
+          // ************************************ FUNKCIJA ODDAJA   *********************************************
+          // ******************* ob oddaji se komponente oddajo na glavno sestavno linijo ***********************
+            
+        function oddaja(){
+            
+            
+           
+            if (steviloKomponentA >= zahtevanihA && steviloKomponentB >= zahtevanihB && steviloKomponentC >= zahtevanihC &&
+               (zahtevanihA+zahtevanihB+zahtevanihC>0)) {   // pogoj za oddajo - določimo koliko posameznih komponent potrebujemo; 
+                
+                
+                    kompA.splice(0,zahtevanihA);
+                    
+                    for(var i=0;i<kompA.length; i++){
+                    kompA[i].yVel = 1;
+                        
+                    }
+                
+                 kompB.splice(0,zahtevanihB);
+                    
+                    for(var i=0;i<kompB.length; i++){
+                    kompB[i].yVel = 1;
+                        
+                    }
+                
+                 kompC.splice(0,zahtevanihC);
+                    
+                    for(var i=0;i<kompC.length; i++){
+                    kompC[i].yVel = 1;
+                        
+                    }
+                
+                
+                for(var i=0; i<zahtevanihA; i++) {
+                     steviloKomponentA--;
+                }
+                
+                 for(var i=0; i<zahtevanihB; i++) {
+                     steviloKomponentB--;
+                }
+                
+                 for(var i=0; i<zahtevanihC; i++) {
+                     steviloKomponentC--;
+                }
+                
+             
+                
+                sestava();
+            }
+            else {števecIzgub++;}
+        }
+         
+         // ************************************ FUNKCIJA SESTAVA   *********************************************
+          // ******************* ob sestavi se komponente na sestavni liniji sestavijo v končni izdelek  ***********************
+        
+        function sestava() {
+            sestavaCas = 0;
+           
+            if(čas>1) {
+            
+            for (var i=0; i< zahtevaniSkupno; i++) {
+                kompDeli.push(new Agent(10,(300-i*10),0.4,-0.4));   // Dodamo agente
+                
+            }  
+        }
+        }       
+        
+        
+        function loop() {
+                
+        canvas = document.getElementById("cv1");
+        ctx = canvas.getContext("2d");
+        
+        canvas2 = document.getElementById("cv2");
+        ctx2 = canvas2.getContext("2d");
+        
+        canvas3 = document.getElementById("cv3");
+        ctx3 = canvas3.getContext("2d");
+            
+        canvas4 = document.getElementById("cv4");
+        ctx4 = canvas4.getContext("2d");
+            
+        canvas5 = document.getElementById("cv5");
+        ctx5 = canvas5.getContext("2d");
+    
+             
+        ctx.fillStyle = "#b94663"; //KOMP A
+        ctx2.fillStyle = "#5369ac"; // KOMP B
+        ctx3.fillStyle = "#2dd290"; // KOMP C
+        ctx4.fillStyle = "#222222";  // SESTAVA
+        ctx5.fillStyle = "#555555";  // KAMION
+         
+        document.getElementById("čas").value = čas;   
+            
+        document.getElementById("zahtevanihA").value = zahtevanihA;
+        document.getElementById("zahtevanihB").value = zahtevanihB;
+        document.getElementById("zahtevanihC").value = zahtevanihC;   
+            
+        document.getElementById("sestavniCas").value = sestavniCas; // uporabniško določen  
+            
+        //document.getElementById("odpremaCas").value = odpremaCas;  
+            
+        document.getElementById("štKompA").value = steviloKomponentA;
+        document.getElementById("štKompB").value = steviloKomponentB;
+        document.getElementById("štKompC").value = steviloKomponentC;
+        document.getElementById("štIzgub").value = števecIzgub;
+            
+        document.getElementById("delavciA").value = delavciA;
+        document.getElementById("delavciB").value = delavciB;
+        document.getElementById("delavciC").value = delavciC;
+            
+         document.getElementById("razpolozljiviDelavci").value = razpolozljiviDelavci;    
+            
+        //document.getElementById("normaAcas").value = normaAcas;
+        //document.getElementById("normaBcas").value = normaBcas;
+        //document.getElementById("normaCcas").value = normaCcas;
+        
+       //document.getElementById("sestavaCas").value = sestavaCas;
+        document.getElementById("izdani").value = steviloIzdelkov;  
+            
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // brišemo celotno platno
+        ctx2.clearRect(0, 0, canvas2.width, canvas2.height); 
+        ctx3.clearRect(0, 0, canvas3.width, canvas3.height); 
+        ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+        ctx5.clearRect(0, 0, canvas5.width, canvas5.height);
+            
+    razpolozljiviDelavci = skupnoDelavci -delavciA-delavciB-delavciC; 
+    zahtevaniSkupno = zahtevanihA+zahtevanihB+zahtevanihC;
+           
+  
+    // ***************************************** KOMP A ****************************************************************
+            
+        if(normaAcas >= normaA && steviloKomponentA < 22 && normaA != 1000) {  // ****************** možen prostor na liniji
+                kompA.push(new Agent(10,10,0,1)); // *************************** dodamo agenta 
+                steviloKomponentA++;
+            
+                normaAcas = 0;
+           }
+            
+            graf1.izriši(steviloKomponentA);
+            
+        for(var i=0;i<kompA.length; i++){
+                
+            kompA[i].update();
+            ctx.fillRect(kompA[i].x,kompA[i].y,30,10); 
+            
+                if( kompA[i].y > canvas.height - ((i+1)*12)) {
+                       
+                    kompA[i].yVel= 0;
+                    
+                }
+     }
+            
+            //****************** ***********************************komp B******************************************
+            
+            if(normaBcas >= normaB && steviloKomponentB < 22 && normaB != 1000) {
+                kompB.push(new Agent(10,10,0,1)); // *************************** dodamo agenta 
+                steviloKomponentB++;
+                 normaBcas = 0;
+           }
+            graf2.izriši(steviloKomponentB);
+            
+        for(var i=0;i<kompB.length; i++){
+                
+            kompB[i].update();
+            ctx2.fillRect(kompB[i].x,kompB[i].y,30,10); 
+            
+                if( kompB[i].y > canvas2.height - ((i+1)*12)) {
+                       
+                    kompB[i].yVel= 0;
+                    
+                }
+             
+     }
+         
+            // ******************* ************************komp C ******************************************************
+            
+            if(normaCcas >= normaC && steviloKomponentC < 22 && normaC != 1000) {
+                
+                kompC.push(new Agent(10,10,0,1)); // *************************** dodamo agenta 
+                steviloKomponentC++;
+            
+                normaCcas = 0;
+                
+           }
+                 graf3.izriši(steviloKomponentC);
+            
+        for(var i=0;i<kompC.length; i++){
+                
+            kompC[i].update();
+            ctx3.fillRect(kompC[i].x,kompC[i].y,30,10); 
+            
+                if( kompC[i].y > canvas3.height - ((i+1)*12)) {
+                       
+                    kompC[i].yVel= 0;
+                    
+                }
+             
+     }
+                        
+         
+      // ******************************************************* KLIC ODDAJA  *******************************************      
+            if(čas % sestavniCas == 0 && čas > 100) {
+           
+            oddaja(); 
+          
+            }
+            
+            // ************************************************* KOMP DELI *************************************
+            
+            
+             for(var i=0;i<kompDeli.length; i++){
+                
+                kompDeli[i].update();
+                 
+                ctx4.fillRect(kompDeli[i].x,kompDeli[i].y,20,10); 
+            
+                    if( kompDeli[i].y < canvas4.height/2 ) {  // zaustavimo na sredini
+                       
+                        kompDeli[i].yVel= 0;
+                        kompDeli[i].xVel= 0;
+                         
+                }
+                 if (sestavaCas > (sestavniCas-400)) {
+                     kompDeli[i].xVel = 1;
+                 }
+                 
+                 if (sestavaCas > (sestavniCas-200)) {
+                    kompDeli.splice(0,zahtevaniSkupno);
+                    
+                     kolicinaTovornjak++;
+                
+     }
+             }
+            
+            if (sestavaCas == (sestavniCas - 200)) {
+                  steviloIzdelkov++;
+                     
+            }
+            
+            //************************************************ TOVORNJAK ********************************************
+            
+            if ( tovornjak.length < 1) {
+                 tovornjak.push(new Agent(0,140,0,0)); // *************************** dodamo agenta 
+            }
+                
+            
+        for(var i=0;i<tovornjak.length; i++){
+                
+            tovornjak[i].update();
+            ctx5.fillRect(tovornjak[i].x,tovornjak[i].y,60,30); 
+            
+            
+            if (čas > 550 && odpremaCas == 550) {
+                tovornjak[i].xVel = -2;
+                
+            }
+            
+            if (tovornjak[i].x < 1 && odpremaCas > 600) {
+                    tovornjak[i].xVel = 0;
+                }
+            
+            if(kolicinaTovornjak >= 5) {
+                odpremaCas =0;
+                kolicinaTovornjak = 0;
+                tovornjak[i].xVel = 1.5;
+                
+            }
+            
+        }     
+            
+       // povečanje časa 
+            
+        čas++;
+        normaAcas++;
+        normaBcas++;
+        normaCcas++;
+        odpremaCas++;
+            
+            if (čas < sestavniCas) { 
+                sestavaCas = 0;
+            }
+        else {
+            sestavaCas++;
+        } 
+            
+        }
+        
+      // ************************************ kreiramo agente iz arrayov ************************************************  
+        
+        for(var i=0; i<steviloKomponentA; i++){
+        
+        kompA[i] = new Agent(10,10,0,1);
+            }
+        
+        for(var i=0; i<steviloKomponentB; i++){
+        
+        kompB[i] = new Agent(10,10,0,1);
+            }
+                
+         for(var i=0; i<steviloKomponentC; i++){
+        
+        kompC[i] = new Agent(10,10,0,1);
+            }
+        
+         for(var i=0; i<kompDeli.length; i++){
+        
+        kompDeli[i] = new Agent(kompDeli[i].x,kompDeli[i].y,kompDeli[i].xVel,kompDeli[i].yVel);
+            }
+        
+        
+        for(var i=0; i<tovornjak.length; i++){
+        
+        tovornjak[i] = new Agent(0,150,0,0);
+            }
+        
+                
+      
+        
+ // ********************************** GUMBI POŽENI USTAVI KORAČNO *******************************************************       
+        
+function poženi() {
+             
+  
+    if (čas > stopČas) { // prekinemo simulacijo oz. Timeout, če je čas >= času zaključka simulacije
+        stikaloKoračniZagon = 1;
+        clearTimeout(aktiven); // prekinemo izvajanje oz. Timeout
+    }
+    else {
+        loop(); // kličemo funkcijo za izvedbo simulacije
+        aktiven = setTimeout("poženi()", 10); // na 10ms kličemo funkcijo poženi
+    }
+}
+
+function ustavi() {
+    if (aktiven) clearTimeout(aktiven);
+}
+    
+function koračniZagon () {
+    if (aktiven) clearTimeout(aktiven);
+    stikaloKoračniZagon = 1;
+    loop();
+}
+        
+// ************************************ GUMBI ZA PRERAZPOREDITEV DELOVNE SILE PO KOMPONENTAH *********************************
+        
+        function dodajA() {
+        sestevekNorm = normaA+normaB+normaC;
+           if (sestevekNorm >= 1500 && normaA > 100) { 
+            normaA -= 100;
+               delavciA++;
+            
+           }
+  }  
+
+        function dodajB() {
+            sestevekNorm = normaA+normaB+normaC;
+        if (sestevekNorm >= 1500 && normaB > 100) { 
+            normaB -= 100;
+          delavciB++;
+           }
+  }    
+        function dodajC() {
+      sestevekNorm = normaA+normaB+normaC;
+        if (sestevekNorm >= 1500 && normaC > 100) { 
+            normaC -= 100;
+            delavciC++;
+          }
+  }    
+        
+        function zmanjsajA() {
+            if (normaA < 1000) {
+                normaA += 100;
+                delavciA--;
+            }
+        }
+         function zmanjsajB() {
+              if (normaB < 1000) {
+                normaB += 100;
+                  delavciB--;
+            }
+        }
+         function zmanjsajC() {
+              if (normaC < 1000) {
+                normaC += 100;
+                delavciC--;
+            }
+        }
+        
+        // ************************************ GUMBI ZA POVEČANJE/ZMANJŠANJE ZAHTEVANIH KOMPONENT *********************************
+        
+        
+        function povecajZahA() {
+            if (zahtevanihA < 6){
+                zahtevanihA++;
+            }
+        }
+        
+          function povecajZahB() {
+            if (zahtevanihB < 6){
+                zahtevanihB++;
+            }
+        }
+        
+          function povecajZahC() {
+            if (zahtevanihC < 6){
+                zahtevanihC++;
+            }
+        }
+        
+          function zmanjsajZahA() {
+              if(zahtevanihA > 0){
+                 zahtevanihA--; 
+              }
+              
+          }
+        
+          function zmanjsajZahB() {
+              if(zahtevanihB > 0){
+                  zahtevanihB--;
+              }
+              
+          }
+        
+          function zmanjsajZahC() {
+              if(zahtevanihC > 0){
+                  zahtevanihC--;
+              }
+              
+          }
+        
+        function potrdiSestavniCas() {
+            var vrednost = document.getElementById("sestavniCas").value;
+            
+            if (vrednost >1000) {
+                
+                sestavniCas = document.getElementById("sestavniCas").value;
+                  
+            }
+            
+        }
+        
+ function load() {
+     
+
+    canvas = document.getElementById("graf1");
+     canvas = document.getElementById("graf2");
+     canvas = document.getElementById("graf3");
+     
+    ctx = canvas.getContext("2d");
+    
+    ctx.fillStyle = "#ff0000"; // določimo rdečo barvo
+
+        
+     graf1 = new GrafPovprečja("graf1", 2000, 22, 100);
+      graf2 = new GrafPovprečja("graf2", 2000, 22, 100);
+      graf3 = new GrafPovprečja("graf3", 2000, 22, 100);
+ 
+ }
+        
+        </script>
+        
+            
+            
+            
+            
+            
+            
+            
+		</div>
+	</div>
+	
+	<div id="footer">
+		<p> &copy 2017 - Aljaž Toman - Modeliranje kompleksnih sistemov
+		</p>
+	
+	</div>
+	
+	
+</body>
+
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Modeliranje kompleksnih sistemov</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/moj.css">
+
+</head>
+
+<body onload="load();">
+	<div id="header">
+		<div id="headerleft">
+			<h1>Modeliranje kompleksnih sistemov</h1>
+		</div>
+		
+	</div>
+	
+	<div id="wrapper">
+		<div id="left">
+                <a href="index.htm">Domov </a> 
+		      <a href="agentni.htm">Agentni model </a> 
+			<a href="sd.htm">Model sistemske dinamike </a>
+			
+			
+		
+		</div>
+		
+        
+		<div id="content">     
+            
+        <h1>Opis modelov</h1>
+            
+            <div id="zaboj" text-align:justify>
+                <h1>Agentni model</h1>
+                 Agentni model prikazuje simulacijo proizvodnje linije v organizaciji. V konkretnem primeru je simularano okolje s 3 proizvodnimi linijami posameznih komponent, ki so kasneje na liniji SESTAVA vgrajene oziroma sestavljene v končni izdelek. Sestavljen končni izdelek se po sami sestavi prestavi iz sestavne linije v prostor za odpremo oziroma v tovornjak, ta pa se odpelje ob določeni napolnjenosti. 
+                <br><br>
+                <center><img src="agentni_slika.jpg" ></center>
+                <br>
+                Prvi del - Komponente A, B, in C
+                <br><br>
+                V levem delu simulacije lahko vidimo tri proizvodnje linije za posamezno komponento. Te komponente imajo programsko določen proizvajalni čas, oziroma čas, v katerem se kreira nova komponenta. Ta čas pa je odvisen od trenutnega števila delavcev na posamezni liniji. Namreč uporabnik lahko tekom simulacije dodaja ali odstranjuje delavce na posamezni liniji komponente. S tem lahko prerazporedi delovno silo glede na potrebe končnega izdelka. 
+                <br><br>
+                Prenos komponente iz proizvodne linije komponent na linijo sestave je poimenovan ODDAJA. Ob oddaji se iz dela komponent odstrani uporabniško določeno število posameznih komponent. V kosovnici uporabnik specificira koliko komponent posameznega tipa je potrebno za sestavo končnega izdelka. V kolikor ni na voljo zadostnega števila komponent, kot bi ga končni izdelek potreboval, se v programu zabeleži zamujen korak, sestavna linija pa čaka, da bo na voljo zadostno število VSAKEGA tipa komponente. 
+                <br><br><br>
+                Drugi del - Sestava
+                <br><br>
+                Sestava se prvič proži, ko je pri komponentah zadostno število posameznih komponent. Ko je ta pogoj izpolnjen, se ta količina komponent prenese na sestavno linijo. Čas sestave prav tako uporabnik lahko spremeni v kosovnici. Po pretečenem sestavnem času se končni izdelek prestavi iz sestavnega dela v odpremo. Ob tem se pa tudi zabeleži oziroma poveča število izdanih izdelkov. 
+                 <br><br><br>
+                Tretji del - Odprema
+                <br><br>
+                Del odpreme je ponazorjen bolj zaradi animacije. Programsko določimo prostornino tovornjaka. Ko je tovornjak poln z izdanimi izdelki, ta odpelje.
+                <br><br><br>
+                Kosovnica in prerazporejanje delovne sile
+                <br><br>
+                Kot že omenjeno, je mogoče uporabniško prilagajati kosovnico tekom animacije. Tako lahko nastavimo točno število posameznih komponent, ki se bodo vgrajevale v končni izdelek. Poleg tega pa lahko določimo tudi sestavni čas končnega izdelka. Na drugi strani pa lahko prerazporejamo delovno silo na delu komponent. Namreč lahko se zgodi, da če nek izdelek potrebuje večje število komponent tipa A, bomo morali povečati delovno silo na tem delu. 
+                <br><br><br>
+                Statistike
+                <br><br>
+                Zadnji del predstavljajo statistike. Prvi števec nam prikazuje število izdanih izdelkov, torej število zaključenih sestav. Drugi števec nam prikazuje število zamujenih korakov. Za zamujen korak se smatra vsakič, ko bi na sestavni del lahko prišle nove komponente in bi se izdelek začel sestavljati, vendar to ni bilo mogoče, saj ni bilo na voljo zadostnega števila določene komponente. Nato pa imamo še prikaze števila komponent v realnem času, torej koliko posameznih komponent imamo na voljo tekom simulacije na linijah. To troje pa je prikazano tudi grafično z grafom.  <br>
+                <center><img src="agentni2_slika.jpg" width =800px></center>
+            </div>
+            
+             <div id="zaboj"text-align:justify>
+            <h1>Model sistemske dinamike</h1>
+                 Model sistemske dinamike ponazarja proces naročanja materiala za skladišče. Na začetku uporabnik specificira želeno količino zaloge v skladišču, koliko materiala proizvodnja linija sprejme v časovnem koraku, zanesljivost dobavitelja in predviden dobavni čas. Glede na vnesene specifikacije naročila simulacija prikaže odziv sistema.  
+                    Kot dodatno lahko tekom same simulacije prilagajamo dobavni čas (ga skrajšamo ali podaljšamo) v kolikor pride do nepredvidenih odstopanj. <br><br>
+                   <br>
+                 <center><img src="sd_slika.jpg" width=700px><br></center>
+                    Model ima dve stanji, in sicer stanje dostave in stanje skladišča. Prvo stanje nam pove, koliko naročenega materiala je dejansko na poti in bo v določenem času prispelo v naše skladišče. Drugo stanje pa nam pove količino dejanske zaloge pri nas. <br><br>
+                    Dostava = trenutna vrednost + časovni korak*(Naročanje(pretok) – Dobava(pretok))<br>
+                    Skladišče = trenutna vrednost + časovni korak*(Dobava(pretok) – Poraba proizvodnje (pretok)) <br><br>
+                    Model ima tri pretoke, in sicer pretok Naročanje, Dobava ter Poraba proizvodnje. Pri naročanju gre za razliko med želeno vrednostjo zaloge in dejansko zalogo v skladišču, kjer upoštevamo tudi zanesljivost dobavitelja. Pretok Dobava pa predstavlja dejanski prenos količin iz stanja Dostave v naše skladišče, z upoštevanjem dobavnega časa. Tretji pretok Poraba proizvodnje pa predstavlja uporabniško definirano količino, koliko materiala proizvodnja sprejme v časovnem koraku. <br><br>
+                    Naročanje = faktor zanesljivosti dobavitelja * (želena vrednost zaloge – Skladišče(stanje))<br>
+                    Dobava = Dostava(Stanje) / dobavni čas (vrednost)<br>
+                    Poraba proizvodnje = količina porabe proizvodnje (vrednost)<br>
+
+                <br>
+                 <center><img src="sd2_slika.jpg" width=700px></center>
+                 <br><br>
+                 Po proženju simulacije lahko vidimo tri grafične prikaze odzivov. Prvi nam prikazuje stanje naše zaloge. Druga dva grafa pa prikazujeta pretok Naročanje(koliko materiala je naročeno) in stanje Dostava (koliko materiala je na poti). Ker imata zadnja dva grafa tudi negativne vrednosti je temu ustrezno prilagojen tudi izris. X os je v tem primeru premaknjena navzgor, za lažjo interpretacijo pa je tekom izvajanja simulacije ta os tudi izrisana. Poleg tega je pod posameznim grafom prikazana trenutna vrednost za pripadajoče stanje/pretok, pod tem pa je vsak korak zabeležen in izpisan v tabeli. 
+                 <br>
+            </div>
+            
+            
+	</div>
+	
+	<div id="footer">
+		<p> &copy 2017 - Aljaž Toman - Modeliranje kompleksnih sistemov
+		</p>
+	
+	</div>
+	
+	
+</body>
+
+
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Modeliranje kompleksnih sistemov</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/moj.css">
+
+</head>
+
+<body onload="load();">
+	<div id="header">
+		<div id="headerleft">
+			<h1>Modeliranje kompleksnih sistemov</h1>
+		</div>
+		
+	</div>
+	
+	<div id="wrapper">
+		<div id="left">
+		
+			<a href="index.htm">Agentni model </a> 
+			<a href="zvezni.htm">Zvezni model </a>
+			
+			
+		
+		</div>
+		
+        
+		<div id="content">     
+            
+    
+    <script src="graf2.js"></script>
+<h1>Zvezni model zalaganja skladišča</h1>
+<!--  ZGORNJI DEL, DIV in DIV DESNO *******************************************   -->            
+            
+    <div id="zaboj">
+       
+        <div id="zaboj-desno">
+        <h1>Simulacija</h1>
+Čas zaključka simulacije: <input id="stopČas" class="tekstovni"  value =200 />
+        <br>
+             <br>
+            <input type = "button" class="button" value = "Poženi" onClick ="poženi();" />
+    <input type = "button" class="button-rdeci" value = "Ustavi" onClick ="ustavi();" />
+    <input type = "button" class="button" value = "Koračno" onClick ="koračniZagon();" />
+    <br>
+            <br>Spreminjanje dobavnega časa MED simulacijo: <br>
+            <br>
+    
+    <input type = "button" class="button" value = "Podaljšaj dobavni čas" onClick ="podaljsajDobava();" />
+       <input type = "button" class="button-rdeci" value = "Skrajšaj dobavni čas" onClick ="skrajsajDobava();" />
+   <br>
+            
+        </div>
+        
+         <h1>Naročanje</h1>
+        <br> 
+        Na tem mestu vnesemo specifikacije našega naročila <br><br>
+        
+    Želena vrednost v skladišču: <input id="želenaVrednost" class="tekstovni" value =1000 />
+    <br>
+    Poraba proizvodnje: <input id="poraba" class="tekstovni"  value =10 /> <br>
+    Zanesljivost dobavitelja: <input id="zanesljivostDobavitelja" class="tekstovni"  value =0.78 /> <br>
+    Dobavni čas: <input id="dobavniCas" class="tekstovni"  value =3 /> <br>
+        
+            </div>
+<div id="izpis1"></div>
+<div id="izpis2"></div>
+<div id="izpis3"></div>
+<br>
+<!--  VSEBINA SIMULACIJE *******************************************   -->  
+            
+            <div id="zaboj">
+            Čas simulacije: <input type = "text"  class="tekstovni"  id="čas" value = 0 /><br><br>
+                
+<canvas id="platno1" width="320" height="200" style="border: 1px dashed #00c3c3"></canvas>
+<canvas id="platno2" width="320" height="200" style="border: 1px dashed #00c3c3"></canvas>
+<canvas id="platno3" width="320" height="200" style="border: 1px dashed #00c3c3"></canvas>
+<br>
+    <br><br>
+    
+    Trenutna Zaloga: <input type = "text"  class="tekstovni"  id="zaloga" value = 0 />
+                	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+    Naročenih: <input type = "text" class="tekstovni"   id="naročil" value = 0 />
+                	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp;	&nbsp; 	&nbsp;	&nbsp;	&nbsp;	&nbsp;
+    Na poti: <input type = "text"  class="tekstovni"  id="napoti" value = 0 />
+    <br><br>
+            </div>
+            <div id="zaboj">
+<table border="1" id="tabelaA">
+<tr>
+<td>Čas</td><td>Skladišče (Level 0)</td><td>Naročanje (Rate 0) </td><td>Log. mreža (Level 1)</td>    
+</tr>
+</table>
+            </div>
+<script type="text/javascript">
+"use strict"; // omogočimo delo z razredi (class), spremenljivke moramo deklarirati z var
+    
+    var izpis1 = document.getElementById("izpis1");
+    var izpis2 = document.getElementById("izpis2");
+    var izpis3 = document.getElementById("izpis3");
+    
+    var dt = 1; //časovni korak delta t pri eulerjevi numerični integracijski metodi
+    var čas = 0; //spremenljivka časa
+    var stopTime = 0; // čas zaključka izvedbe simulacije
+    
+    var levelArray = new Array(); //polje za objekte stanja
+    var rateArray = new Array(); //pretoka
+    var auxArray = new Array(); //pomožnih spremenljivk 
+    
+    var graf1; //spr. za graf iz .js datoteke
+    var graf2, graf3;
+    
+    var stopČas = 0; //stop čas preberemo iz vnosnega polja
+    var aktiven; //kontroliranje funkcije settimeout
+    var stikaloKoračniZagon =0;
+    
+    var niz= new Array();
+    
+    var initZastavica = false;  // zastavica za inicializacijo
+    
+    
+    
+    class Level {
+        constructor (value) {
+            this.value = value; // prenesemo zač vrednost iz argumenta 
+            levelArray.push(this); // Celotni objekt porinemo v polje skupaj s funkcijami updateFn in update
+        }
+            updateFn(){}; // za začetek prazna funkcija, kot enačba; ob definiciji modela tu vpišemo enačbo
+            
+            update() {
+            this.value = this.value + dt*this.updateFn(); // izvedemo integracijo po eulerjevi metodi
+                
+                                
+                    
+        }
+        
+    }
+    
+    class Rate {
+        constructor(value){
+            
+           
+            this.value = value; 
+            rateArray.push(this);
+            
+            
+        }
+        
+        updateFn() {};
+        update() {
+            
+            this.value = this.updateFn(); // tu je funkcija drugačna kot pri level, brez dt
+            
+        }
+    }
+    
+        class Auxiliary {
+        constructor(value){
+            this.value = value; 
+            auxArray.push(this);
+        }
+        
+        updateFn() {};
+        update() {
+            this.value = this.updateFn(); // tu je funkcija drugačna kot pri level, brez dt
+            
+        }
+    }
+    
+    
+    // *****************************************************************************************
+    // Definicija modela ZAČETEK
+    // *****************************************************************************************
+    
+    //Vrstni red spremenljivk je pomemben, da gredo v polju po vrsti, da jih lahko ob update preračunamo. Na začetku so inicializirana le stanja in lahko določimo le tiste Aux in Rate, ki so vezani na stanja. Zaporedje je določeno s povezanostjo z "level". 
+    
+var Skladisce = new Level(100); // stanje zalog z začetno vrednostjo 100
+var Dostava = new Level(100); // stanje naročil v logistični (L) mreži
+    
+var Naročanje = new Rate(); // definicija oz. kreiranje pretok
+var Dobava = new Rate(); // definicija oz. kreiranje pretok
+var Prodaja = new Rate(); // definicija oz. kreiranje pretok
+    
+var želenaVrednost = 1000; // želeno stanje zalog v skladišču (želimo imeti 1000 enot)
+var zanesljivostDobavitelja = 0.78;
+// kolikšen delež razlike med želenim in dejanskim stanjem se v eni časovni enoti
+// pri naročanju realizira
+var dobavniCas = 3; // zakasnitev dobave ("Time delay")
+var poraba = 0;
+    
+// Auxiliary ~ definicije za elemente Aux. ~ pomožne elemente
+
+// Rate
+Naročanje.updateFn = function() {return zanesljivostDobavitelja*(želenaVrednost-Skladisce.value)};
+Dobava.updateFn = function() {return Dostava.value / dobavniCas};
+Prodaja.updateFn = function() {return poraba};    
+    
+// Level
+Skladisce.updateFn = function() {return Dobava.value - Prodaja.value};
+Dostava.updateFn = function() {return Naročanje.value - Dobava.value};
+    
+    // *****************************************************************************************
+    // Definicija modela KONEC
+    // *****************************************************************************************
+   
+    //Funkcija init ~ le to poženemo na začetku ob času 0, da določimo vrednosti R-ov  in Aux
+    
+    function init() {
+    if(!initZastavica) { // če model še ni bil inicializiran ga inicializiramo
+        niz.push(čas); // v niz za izpis v tabelo potisnem čas
+
+        for(var i=0; i<auxArray.length; i++) {
+            auxArray[i].update();
+        }
+
+        for(var i=0; i<rateArray.length; i++) {
+            rateArray[i].update();
+            niz[2]=((rateArray[0].value).toFixed(2));
+        }
+
+        niz[1]=((levelArray[0].value).toFixed(2));
+        
+        niz[3]=((levelArray[1].value).toFixed(2));
+        
+        dodajVrstico("tabelaA", niz);
+        niz = []; // niz izpraznimo
+
+        graf1.izriši(levelArray[0].value); // izrišemo vrednost prvega stanja [0] na graf
+          graf2.izrišiNeg(rateArray[0].value);
+        graf3.izrišiNeg(levelArray[1].value);
+        initZastavica = true;
+    }
+}
+    
+    
+   function loop() {
+    čas = čas + 1; // prištejemo 1 k času
+       
+        želenaVrednost = document.getElementById("želenaVrednost").value;
+        
+        poraba = document.getElementById("poraba").value;
+       
+       zanesljivostDobavitelja = document.getElementById("zanesljivostDobavitelja").value;
+       
+       dobavniCas = document.getElementById("dobavniCas").value;
+    
+    for(var i=0; i<levelArray.length; i++) {
+        levelArray[i].update();
+        
+    }
+    
+    for(var i=0; i<auxArray.length; i++) {
+        auxArray[i].update();
+    }
+    
+    for(var i=0; i<rateArray.length; i++) {  
+        rateArray[i].update();
+    }
+    
+    niz.push(čas); // v niz potisnemo vrednost časa
+    niz.push((levelArray[0].value).toFixed(2));
+    niz.push((rateArray[0].value).toFixed(2));
+    niz.push((levelArray[1].value).toFixed(2));
+    
+    dodajVrstico("tabelaA", niz);
+    niz = []; // niz izpraznimo
+    
+    document.getElementById("čas").value = čas;   
+       document.getElementById("zaloga").value = (levelArray[0].value).toFixed(0);   
+       document.getElementById("naročil").value = (rateArray[0].value).toFixed(0);   
+       document.getElementById("napoti").value = (levelArray[1].value).toFixed(0);   
+       
+    graf1.izriši(levelArray[0].value); // izrišemo vrednost prvega stanja [0] na graf
+    graf2.izrišiNeg(rateArray[0].value);
+    graf3.izrišiNeg(levelArray[1].value);
+}
+    
+    
+    function dodajVrstico(idTabele, niz) {
+     
+            
+    var tabelaRef = document.getElementById(idTabele);
+    //pridobimo referenco sklic na tabelo
+     //dodamo vrstico na koncu tabele
+        
+    var novaVrstica = tabelaRef.insertRow(tabelaRef.rows.length);
+    
+    //************* za novo ***************************************************
+    for(var i = 0; i<niz.length ; i++) {
+        
+    var novaCelica = novaVrstica.insertCell(i);
+    var novTekst = document.createTextNode(niz[i]);
+    novaCelica.appendChild(novTekst);
+            }
+    //************* ***********************************************************
+    }
+    
+    
+    function poženi() {
+        init();   //init lahko tudi večkrat kličemo, izvede pa se le enkrat zaradi zastavice
+        stopČas = document.getElementById("stopČas").value;
+        želenaVrednost = document.getElementById("želenaVrednost").value;
+        
+        poraba = document.getElementById("poraba").value;
+        
+        if(čas >= stopČas) { //prekinemo simulacijo oz timeout, če je čas večji ali enak času zaključka simulacije
+            stikaloKoračniZagon =1 ;
+            clearTimeout(aktiven); //prekinemo izvajanje simulacije
+            
+        }
+        else {
+            
+            loop(); 
+            aktiven = setTimeout("poženi()", 60); // na 500ms kličemo fn poženi 
+            
+        }
+    }
+    
+    function ustavi() {
+        if(aktiven) clearTimeout(aktiven);        
+        
+    }
+    
+    function koračniZagon() {
+        if(aktiven) clearTimeout(aktiven);   
+        
+        stikaloKoračniZagon = 1;
+        if(!initZastavica) {
+            init();   //če inicializacija ni izvedena, izvedemo inicializacijo, sicer pa kličemo loop
+        }
+        
+        else{loop();
+             
+             
+            }
+    }
+    
+    
+    function podaljsajDobava() {
+        if (dobavniCas< 15) {
+        dobavniCas++;
+        document.getElementById("dobavniCas").value= dobavniCas;
+        }
+    }
+    
+    function skrajsajDobava() {
+        if(dobavniCas > 1) {
+        dobavniCas--;
+        document.getElementById("dobavniCas").value= dobavniCas;
+        }
+    }
+    
+    
+    function load() {
+    
+  
+ 
+    graf1 = new Graf("platno1", 200, 2000); // 1. Arg=ID platna, 2. Arg=max po x osi 3. Arg.=max po y osi
+    graf2 = new Graf("platno2", 200, 2000);
+    graf3 = new Graf("platno3", 200, 2000);
+    }
+        
+    </script>    
+            
+            
+            
+		</div>
+	</div>
+	
+	<div id="footer">
+		<p> &copy 2017 - Aljaž Toman - Modeliranje kompleksnih sistemov
+		</p>
+	
+	</div>
+	
+	
+</body>
+
+
+</html>
